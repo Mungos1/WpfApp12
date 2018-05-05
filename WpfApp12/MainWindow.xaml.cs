@@ -25,27 +25,41 @@ namespace WpfApp12
         public MainWindow()
         {
             InitializeComponent();
+
+            // Here I call my method that adds items to the combobox
+            addLangsToComboBox();
         }
 
-        private void lng_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        // Add items to the combobox (aka. add languages)
+        private void addLangsToComboBox()
         {
-            public string language= new string language;
-                switch (language)
-                {
-                case "de": "en-de";break;
-                case "es": "en-es"; break;
-                default: "en-fr"; break;
+            // Create a string array of languages
+            string[] languages = { "en-de", "en-fr", "de-en" };
+            // Make a foreach loop to iterate through the array of languages and add each to the combobox
+            foreach (string language in languages)
+            {
+                // Now add the each language to the combobox
+                languageComboBox.Items.Add(language);
             }
+            // Now set the default item to be the first item from the array of combobox items
+            languageComboBox.SelectedItem = languageComboBox.Items[0];
         }
 
         private void btn_Click(object sender, RoutedEventArgs e)
         {
-            var Client = new WebClient();
-            string apiurl = string.Format ("https://translate.yandex.net/api/v1.5/tr.json/translate?key={0}&text={1}&lang={2}", Constants.apikey, txt1.Text, //pozvati string language)
-            string response = client.DownloadString(apiurl);
-        var result = JsonConvert.DeserializeObject<myJSON.Object>(response);
-        DisplayLabel.Content = result.text[0];
+            // Take the selected language from combobox and call the method to translate
+            string selectedLanguage = languageComboBox.SelectedItem.ToString();
+            translate(selectedLanguage);
+        }
 
+        // Make the get request and get the translation
+        private void translate(string languageDirection)
+        {
+            var client = new WebClient();
+            string apiurl = string.Format("https://translate.yandex.net/api/v1.5/tr.json/translate?key={0}&text={1}&lang={2}", Constants.apikey, txt1.Text, languageDirection);
+            string response = client.DownloadString(apiurl);
+            var result = JsonConvert.DeserializeObject<myJSON.Object>(response);
+            txt2.Text = result.text[0];
         }
 }
 }
